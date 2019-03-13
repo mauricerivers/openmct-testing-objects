@@ -1,24 +1,4 @@
-<!--
- Open MCT, Copyright (c) 2014-2017, United States Government
- as represented by the Administrator of the National Aeronautics and Space
- Administration. All rights reserved.
 
- Open MCT is licensed under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0.
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations
- under the License.
-
- Open MCT includes source code licensed under additional open source
- licenses. See the Open Source Licenses file (LICENSES.md) included with
- this source code distribution or the Licensing information page available
- at runtime from the About dialog for additional information.
--->
 <!doctype html>
 <html lang="en">
     <head>
@@ -27,54 +7,323 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <title></title>
         <script src="bower_components/requirejs/require.js"> </script>
-        <script>
-            var THIRTY_MINUTES = 30 * 60 * 1000;
+        <!-- <script src="personal-plugin.js"> </script> -->
 
-            require(['openmct'], function (openmct) {
-                [
-                    'example/eventGenerator',
-                    'example/styleguide'
-                ].forEach(
-                    openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
-                );
-                openmct.install(openmct.plugins.MyItems());
-                openmct.install(openmct.plugins.LocalStorage());
-                openmct.install(openmct.plugins.Espresso());
-                openmct.install(openmct.plugins.Generator());
-                openmct.install(openmct.plugins.ExampleImagery());
-                openmct.install(openmct.plugins.UTCTimeSystem());
-                openmct.install(openmct.plugins.ImportExport());
-                openmct.install(openmct.plugins.AutoflowView({
-                    type: "telemetry.panel"
-                }));
-                openmct.install(openmct.plugins.Conductor({
-                    menuOptions: [
+
+        <script>
+         var THIRTY_MINUTES = 30 * 60 * 1000;
+
+         require(['openmct'], function (openmct) {
+             [
+                 'example/eventGenerator',
+                 'example/styleguide'
+             ].forEach(
+                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+             );
+             //openmct.install(PersonalPlugin());
+             openmct.install(openmct.plugins.MyItems());
+             openmct.install(openmct.plugins.LocalStorage());
+             openmct.install(openmct.plugins.Espresso());
+             openmct.install(openmct.plugins.Generator());
+             openmct.install(openmct.plugins.ExampleImagery());
+             openmct.install(openmct.plugins.UTCTimeSystem());
+             openmct.install(openmct.plugins.ImportExport());
+             openmct.install(openmct.plugins.AutoflowView({
+                 type: "telemetry.panel"
+             }));
+             openmct.install(openmct.plugins.Conductor({
+                 menuOptions: [
+                     {
+                         name: "Fixed",
+                         timeSystem: 'utc',
+                         bounds: {
+                             start: Date.now() - THIRTY_MINUTES,
+                             end: Date.now()
+                         }
+                     },
+                     {
+                         name: "Realtime",
+                         timeSystem: 'utc',
+                         clock: 'local',
+                         clockOffsets: {
+                             start: -25 * 60 * 1000,
+                             end: 5 * 60 * 1000
+                         }
+                     }
+                 ]
+             }));
+            openmct.install(openmct.plugins.SummaryWidget());
+            openmct.install(openmct.plugins.Notebook());
+            openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
+            openmct.time.timeSystem('utc');
+
+
+            var myObject =
+            {
+               // identifier: {
+               //    namespace: "public.namespace",
+               //    key: "my-root-major-key"
+               // },
+                name: "My Object",
+                type: 'folder',
+                key: 'my-root-major-key',
+                namespace: 'public.namespace',
+                measurements: [
+                    {
+                       name: "One",
+                       key: "one",
+                       namespace: 'public.namespace',
+                       id: "Value",
+                       values: [
+                          {
+                             "key": "value",
+                             "name": "Value",
+                             "units": "kilograms",
+                             "format": "float",
+                             "min": 0,
+                             "max": 100,
+                             "hints": {
+                                 "range": 1
+                             }
+                         },
+                         {
+                             "key": "utc",
+                             "source": "timestamp",
+                             "name": "Timestamp",
+                             "format": "utc",
+                             "hints": {
+                                 "domain": 1
+                             }
+                         }
+                       ]
+                    },
+                    {
+                       name: "two",
+                       key: "two",
+                       namespace: 'public.namespace',
+                       id: "Value",
+                    }
+                ]
+            };
+
+         var myObject2 =
+         {
+            "name": "Spacecraft",
+            "type": 'folder',
+            "namespace": "public.namespace",
+            "key": "sc",
+            "subsystems": [
+                 {
+                     "name": "Propulsion",
+                     "key": "prop",
+                     "namespace": "public.namespace",
+                     "measurements": [
+                         {
+                             "name": "Fuel",
+                             "key": "prop.fuel",
+                             "units": "kilograms",
+                             "type": "float",
+                             "values": [
+                                  {
+                                      "key": "value",
+                                      "name": "Value",
+                                      "units": "kilograms",
+                                      "format": "float",
+                                      "min": 0,
+                                      "max": 100,
+                                      "hints": {
+                                          "range": 1
+                                      }
+                                  },
+                                  {
+                                      "key": "utc",
+                                      "source": "timestamp",
+                                      "name": "Timestamp",
+                                      "format": "utc",
+                                      "hints": {
+                                          "domain": 1
+                                      }
+                                  }
+                              ]
+                         },
+                         {
+                             "name": "Thrusters",
+                             "key": "prop.thrusters",
+                             "units": "None",
+                             "type": "string",
+                             "values": [
+                             {
+                                  "key": "value",
+                                  "name": "Value",
+                                  "format": "enum",
+                                  "enumerations": [
+                                      {
+                                          "string": "ON",
+                                          "value": 1
+                                      },
+                                      {
+                                          "string": "OFF",
+                                          "value": 0
+                                      }
+                                  ],
+                                  "hints": {
+                                      "range": 1
+                                  }
+                              },
+                              {
+                                  "key": "utc",
+                                  "source": "timestamp",
+                                  "name": "Timestamp",
+                                  "format": "utc",
+                                  "hints": {
+                                      "domain": 1
+                                     }
+                                 }
+                             ]
+                         }
+                     ]
+                 },
+                 {
+                     "name": "Communications",
+                     "key": "comms",
+                     "namespace": "public.namespace",
+                     "measurements": [
+                         {
+                             "name": "Received",
+                             "key": "comms.recd",
+                             "units": "bytes",
+                             "type": "integer",
+                         },
+                         {
+                             "name": "Sent",
+                             "key": "comms.sent",
+                             "units": "bytes",
+                             "type": "integer",
+                         }
+                     ]
+                 },
+                 {
+                     "name": "Power",
+                     "key": "pwr",
+                     "namespace": "public.namespace",
+                     "measurements": [
+                         {
+                             "name": "Generator Temperature",
+                             "key": "pwr.temp",
+                             "units": "\u0080C",
+                             "type": "float",
+                         },
+                         {
+                             "name": "Generator Current",
+                             "key": "pwr.c",
+                             "units": "A",
+                             "type": "float",
+                         },
+                         {
+                             "name": "Generator Voltage",
+                             "key": "pwr.v",
+                             "units": "V",
+                             "type": "float",
+                         }
+                     ]
+                 }
+            ]
+         }// end myObject2
+
+            let objectPromise = new Promise(function(resolve, reject) {
+               resolve(myObject2);
+               reject('Did not load object right.');
+            });
+
+            openmct.objects.addRoot({
+               namespace: 'public.namespace',
+               key: 'my-root-major-key'
+            });
+
+            openmct.types.addType('example.my-type', {
+               name: "My Personal Type",
+               description: "This is a personal type that I added!",
+               creatable: true,
+               cssClass: "icon-gear"
+            });
+
+            openmct.types.addType('example.telemetry', {
+               name: "My Personal Type",
+               description: "This is a personal type that I added!",
+               cssClass: "icon-gear"
+            });
+
+            openmct.types.addType('example.subsytem', {
+               name: "Subsytem Type",
+               description: "This is a subsytem type that I added!",
+               cssClass: "icon-layers"
+            });
+
+            var TAXONOMY_ID = "example:sc",
+                        PREFIX = "example_tlm:";
+
+            function makeId(element) {
+                return PREFIX + element.identifier;
+            }
+
+            openmct.objects.addProvider('public.namespace', {
+                get: function (identifier) {
+                     return objectPromise.then(function(data) {
+
+                        if(identifier.key === 'my-root-major-key')
                         {
-                            name: "Fixed",
-                            timeSystem: 'utc',
-                            bounds: {
-                                start: Date.now() - THIRTY_MINUTES,
-                                end: Date.now()
-                            }
-                        },
-                        {
-                            name: "Realtime",
-                            timeSystem: 'utc',
-                            clock: 'local',
-                            clockOffsets: {
-                                start: -25 * 60 * 1000,
-                                end: 5 * 60 * 1000
-                            }
+                           return{
+                              identifier: identifier,
+                              name: data.name,
+                              type: data.type,
+                              location: 'ROOT'
+                           }
                         }
-                    ]
-                }));
-                openmct.install(openmct.plugins.SummaryWidget());
-                openmct.install(openmct.plugins.Notebook());
-                openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
-                openmct.time.timeSystem('utc');
+                        //include subsystems
+                        else {
+                           var measurement = data.subsystems.filter(function (m) {
+                                 return m.key === identifier.key;
+                           })[0];
+                           return {
+                              identifier: identifier,
+                              name: measurement.name,
+                              type: 'example.subsytem',
+                              telemetry:{
+                                 values: measurement.measurements,
+                              },
+                              location: 'public.namespace:my-root-major-key'
+                           };
+                        }
+                     });
+                }
+            });
+
+            openmct.composition.addProvider({
+                appliesTo: function (domainObject) {
+                   return domainObject.identifier.namespace === 'public.namespace' &&
+                        domainObject.type === 'folder';
+                },
+                load: function (domainObject) {
+                    return objectPromise.then(function (data) {
+                            return data.subsystems.map(function (m) {
+                                return {
+                                    namespace: 'public.namespace',
+                                    key: m.key,
+                                };
+                            });
+                        });
+                }
+            });
+
+
+
+
+
+
                 openmct.start();
                 window.openmct = openmct;
             });
+
         </script>
         <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
         <link rel="stylesheet" href="platform/commonUI/general/res/css/openmct.css">
